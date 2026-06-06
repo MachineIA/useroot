@@ -1,0 +1,23 @@
+THEMES = {}
+
+def cargar():
+    print("[🔌] Oh My Eterno cargado")
+
+    cargar_plugins()
+    cargar_temas()
+
+def cargar_plugins():
+    print("[📦] Plugins listos")
+
+def cargar_temas():
+    THEMES["promt1"] = prompt1
+
+def prompt1(user, cwd, branch=None):
+    sep = "<•>"
+    git = f" git:{branch}" if branch else ""
+    user_col = f"\033[32m{user}\033[0m"
+    cwd_col = f"\033[36m{cwd}\033[0m"
+#   return f"{user}@eterno{sep}{cwd}{git}\n  ╰─⟨~‚~⟩⟩⟩"
+    return f"{user_col}@eterno{sep}{cwd_col}{git}\n  ╰─⟨~‚~⟩⟩⟩"
+def get_theme(name="promt1"):
+    return THEMES.get(name, prompt1)
