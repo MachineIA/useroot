@@ -2,31 +2,17 @@ import os
 from collections.abc import Callable
 import libqtile.resources
 from libqtile import bar, layout, qtile, widget
-from libqtile.config import Click, Drag, Group, Key, Match, Output, Screen
+from libqtile.config import Click, Drag, Group, Key, Match, Screen
 from libqtile.lazy import lazy
 from libqtile.utils import guess_terminal
-from libqtile import hook
-from libqtile.config import Key
-import subprocess
 
-@hook.subscribe.startup_once
-def autostart():
-    subprocess.Popen([
-        "mpv",
-        "--loop",
-        "--no-audio",
-        "--fullscreen",
-        "--no-border",
-        "/home/useroot/Descargas/fondos/fondo1.mp4"
-    ])
 mod = "mod4"
-terminal = "kitty"
+terminal = guess_terminal()
 
 keys = [
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
     # Switch between windows
-    Key([mod], "m", lazy.spawn('dmenu_run -fn "monospace-12" -nb')),
     Key([mod], "h", lazy.layout.left(), desc="Move focus to left"),
     Key([mod], "l", lazy.layout.right(), desc="Move focus to right"),
     Key([mod], "j", lazy.layout.down(), desc="Move focus down"),
@@ -84,7 +70,6 @@ for vt in range(1, 8):
         )
     )
 
-
 groups = [Group(i) for i in "123456789"]
 
 for i in groups:
@@ -104,27 +89,12 @@ for i in groups:
                 lazy.window.togroup(i.name, switch_group=True),
                 desc=f"Switch to & move focused window to group {i.name}",
             ),
-            # Or, use below if you prefer not to switch to that group.
-            # # mod + shift + group number = move focused window to group
-            # Key([mod, "shift"], i.name, lazy.window.togroup(i.name),
-            #     desc="move focused window to group {}".format(i.name)),
         ]
     )
 
 layouts = [
     layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
     layout.Max(),
-    # Try more layouts by unleashing below layouts.
-    # layout.Stack(num_stacks=2),
-    # layout.Bsp(),
-    # layout.Matrix(),
-    # layout.MonadTall(),
-    # layout.MonadWide(),
-    # layout.RatioTile(),
-    # layout.Tile(),
-    # layout.TreeTab(),
-    # layout.VerticalTile(),
-    # layout.Zoomy(),
 ]
 
 widget_defaults = dict(
@@ -135,6 +105,7 @@ widget_defaults = dict(
 extension_defaults = widget_defaults.copy()
 
 logo = os.path.join(os.path.dirname(libqtile.resources.__file__), "logo.png")
+
 screens = [
     Screen(
         bottom=bar.Bar(
@@ -150,36 +121,23 @@ screens = [
                     name_transform=lambda name: name.upper(),
                 ),
                 widget.TextBox("default config", name="default"),
-                widget.TextBox("Press &lt;M-r&gt; to spawn", foreground="#d75f5f"),
-                # NB Systray is incompatible with Wayland, consider using StatusNotifier instead
-                # widget.StatusNotifier(),
+                widget.TextBox("Press <M-r> to spawn", foreground="#d75f5f"),
                 widget.Systray(),
                 widget.Clock(format="%Y-%m-%d %a %I:%M %p"),
                 widget.QuickExit(),
             ],
             24,
-            # border_width=[2, 0, 2, 0],  # Draw top and bottom borders
-            # border_color=["ff00ff", "000000", "ff00ff", "000000"]  # Borders are magenta
         ),
         background="#000000",
         wallpaper=logo,
         wallpaper_mode="center",
-        # You can uncomment this variable if you see that on X11 floating resize/moving is laggy
-        # By default we handle these events delayed to already improve performance, however your system might still be struggling
-        # This variable is set to None (no cap) by default, but you can set it to 60 to indicate that you limit it to 60 events per second
-        # x11_drag_polling_rate = 60,
     ),
 ]
 
-# Instead of screens, you can define a function here to specify which Screen
-# should correspond to which Output.
 fake_screens: list[Screen] | None = None
 
-# Instead of screens or fake screens, you can define a function here that
-# returns a list of Screen objects based on the list of Outputs; that way you
-# can decide based on e.g. the number of screens, or which ports are plugged
-# in exactly what do render in each bar for each screen.
-generate_screens: Callable[[list[Output]], list[Screen]] | None = None
+# Modificado para evitar el error de Importación de Output
+generate_screens: Callable[[list], list[Screen]] | None = None
 
 # Drag floating layouts.
 mouse = [
@@ -196,7 +154,6 @@ floats_kept_above = True
 cursor_warp = False
 floating_layout = layout.Floating(
     float_rules=[
-        # Run the utility of `xprop` to see the wm class and name of an X client.
         *layout.Floating.default_float_rules,
         Match(wm_class="confirmreset"),  # gitk
         Match(wm_class="makebranch"),  # gitk
@@ -210,34 +167,10 @@ auto_fullscreen = True
 focus_on_window_activation = "smart"
 focus_previous_on_window_remove = False
 reconfigure_screens = True
-
-# If things like steam games want to auto-minimize themselves when losing
-# focus, should we respect this or not?
 auto_minimize = True
-
-# When using the Wayland backend, this can be used to configure input devices.
 wl_input_rules = None
-
-# xcursor theme (string or None) and size (integer) for Wayland backend
 wl_xcursor_theme = None
 wl_xcursor_size = 24
-
 idle_timers = []  # type: list
 idle_inhibitors = []  # type: list
-
-# XXX: Gasp! We're lying here. In fact, nobody really uses or cares about this
-# string besides java UI toolkits; you can see several discussions on the
-# mailing lists, GitHub issues, and other WM documentation that suggest setting
-# this string if your java app doesn't work correctly. We may as well just lie
-# and say that we're a working one by default.
-#
-# We choose LG3D to maximize irony: it is a 3D non-reparenting WM written in
-# java that happens to be on java's whitelist.
 wmname = "LG3D"
-#my setup_qtile
-border_focus = "#00ffcc"
-border_normal = "#444444"
-border_width = 2
-#border_focus = "#ff00ff"
-#border_normal = "#1a1a1a"
-#border_width = 2
