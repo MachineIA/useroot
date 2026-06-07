@@ -5,10 +5,9 @@
 # ===== ZSH =====
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias zshrc='source ~/.zshrc'
+alias bash='source ~/.bashrc'
 
 # ===== NVIM-LAZY =====
-alias promt='micro ~/.oh-my-zsh/plugins/starship/starship.plugin.zsh'
 alias confkitty='micro ~/.config/kitty/kitty.conf'
 
 
