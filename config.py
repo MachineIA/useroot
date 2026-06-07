@@ -6,37 +6,35 @@ qtile_path = os.path.expanduser("~/.config/qtile")
 if qtile_path not in sys.path:
     sys.path.insert(0, qtile_path)
 
-# 2. Definimos el archivo oculto que guardará nuestra elección
+# 2. Archivo oculto que guarda la elección del tema
 THEME_FILE = os.path.join(qtile_path, ".current_config")
 
-# 3. Configuración por defecto si el archivo no existe (Cargará el estilo Hyprland)
+# 3. Configuración por defecto de respaldo
 config_a_cargar = "config_default"
 
-# 4. Leemos el archivo selector
+# 4. Leemos el archivo selector y validamos dinámicamente
 if os.path.exists(THEME_FILE):
     try:
         with open(THEME_FILE, "r") as f:
             contenido = f.read().strip()
-            # Validamos que solo intente cargar lo que existe
-            if contenido in ["config1", "config2", "config3","config_default"]:
+            
+            # Verificamos si existe el archivo físico (ej: config1.py) antes de importarlo
+            archivo_py = os.path.join(qtile_path, f"{contenido}.py")
+            if os.path.exists(archivo_py):
                 config_a_cargar = contenido
+            else:
+                print(f"⚠️ [Qtile] {contenido}.py no existe. Usando respaldo.")
     except Exception:
-        # Si hay un error leyendo el archivo, se protege usando la configuración por defecto
         config_a_cargar = "config_default"
 
-# 5. ¡EL TRUCO DE MAGIA!
-# Dependiendo del resultado, importamos TODO (*) el contenido del archivo elegido
-# Esto incluye las teclas, los layouts, la barra y los hooks de autostart de ese diseño.
+# 5. Importación dinámica del entorno elegido
+print(f"=== [Qtile] Cargando Entorno Activo: {config_a_cargar} ===")
+
 if config_a_cargar == "config1":
-    print("=== Cargando Entorno Cyberpunk Megacity (config1) ===")
     from config1 import *
 elif config_a_cargar == "config2":
-    print("=== Cargando Nuevo Diseño (config2) ===")
     from config2 import *
 elif config_a_cargar == "config3":
-    print("=== Cargando Nuevo Diseño (config3) ===")
     from config3 import *
 else:
-    # Si todo lo demás falla o si eliges "config_default", te salva la vida el original
-    print("=== Cargando Configuración de Respaldo Original ===")
     from config_default import *
